@@ -1,67 +1,81 @@
- # pz9-auth
+# Практическое занятие №9 - Регистрация и аутентификация пользователей
+## Описание
 
-Минимальный сервис аутентификации с регистрацией и входом пользователей, реализованный на Go с использованием bcrypt для безопасного хранения паролей.
+Этот проект реализует систему регистрации и входа пользователей с безопасным хранением паролей с использованием bcrypt. Созданы эндпоинты для регистрации и аутентификации с валидацией данных и защитой от типичных угроз безопасности.
 
-<b>Структура проекта</b>
-<br>
-<img src="screen/Снимок экрана 2025-11-18 232355.png">
+## Структура проекта
+![alt text](<screen/Снимок экрана 2025-11-18 232355.png>)
 
+## Установка и старт
+1. Предварительные требования
+    Go 1.21+
+    PostgreSQL 12+
+    curl или Postman для тестирования API
 
-Функциональность
-    POST /auth/register - регистрация нового пользователя.
-    POST /auth/login - аутентификация пользователя.
-    Безопасное хэширование паролей с использованием bcrypt.
-    Валидация входных данных.
-    Работа с PostgreSQL через GORM.
-
-Установка и запуск
-
-1. Клонирование и инициализация проекта:
-
-```bash
+2. Настройка проекта
+```go
+# Создание проекта
 mkdir pz9-auth && cd pz9-auth
+
+# Инициализация Go модуля
 go mod init example.com/pz9-auth
-```
 
-2. Установка зависимостей:
-
-```bash
-
+# Установка зависимостей
 go get github.com/go-chi/chi/v5
 go get gorm.io/gorm gorm.io/driver/postgres
 go get golang.org/x/crypto/bcrypt
 ```
 
-3. Настройка переменных окружения:
-```bash
-# Windows PowerShell
-setx DB_DSN "postgres://user:pass@localhost:5432/pz9?sslmode=disable"
-setx BCRYPT_COST "12"
-setx APP_ADDR ":8080"
+3. Настройка базы данных
+```go
+-- Создание базы данных
+CREATE DATABASE pz9_auth;
 
-# macOS/Linux
-export DB_DSN="postgres://user:pass@localhost:5432/pz9?sslmode=disable"
-export BCRYPT_COST=12
-export APP_ADDR=":8080"
+-- Или с использованием psql
+psql -U postgres -c "CREATE DATABASE pz9_auth;"
 ```
 
-4. Запуск приложения:
+4. Содержимое .env:
 ```bash
+DB_DSN=postgres://postgres:password@localhost:5432/pz9_auth?sslmode=disable
+BCRYPT_COST=12
+APP_ADDR=:8080
+```
 
+5. Запуск приложения:
+```bash
 go run cmd/api/main.go
 ```
 
-<img src="screen/Снимок экрана 2025-11-18 231113.png">
+## скриншоты
+![alt text](<screen/Снимок экрана 2025-11-18 231113.png>) 
+![alt text](<screen/Снимок экрана 2025-11-18 231240.png>) 
+![alt text](<screen/Снимок экрана 2025-11-18 231310.png>) 
+![alt text](<screen/Снимок экрана 2025-11-18 231451.png>) 
+![alt text](<screen/Снимок экрана 2025-11-18 232017.png>)
 
-<img src="screen/Снимок экрана 2025-11-18 231451.png">
 
-<img src="screen/Снимок экрана 2025-11-18 231240.png">
+## Вход пользователя
+### Запрос:
+```json
+{
+  "email": "alice@example.com",
+  "password": "AliceSecure123"
+}
+```
 
-<img src="screen/Снимок экрана 2025-11-18 231310.png">
+### Успешный ответ:
+```json
+{
+  "status": "ok",
+  "user": {
+    "id": 1,
+    "email": "alice@example.com"
+  }
+}
+```
 
-<img src="screen/Снимок экрана 2025-11-18 232017.png">
-
-Контрольные вопросы
+## Контрольные вопросы
 
 1. В чём разница между хранением пароля и хранением его хэша? Зачем соль? Почему bcrypt, а не SHA-256?
 
